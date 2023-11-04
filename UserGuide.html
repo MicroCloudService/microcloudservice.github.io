@@ -1,5 +1,5 @@
 <!DOCTYPE html><html><head>
-      <title>Overview</title>
+      <title>UserGuide</title>
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       
@@ -25,44 +25,39 @@
       <div class="crossnote markdown-preview  ">
       
 <h1 id="manage-my-resources-mmr">Manage My Resources (MMR) </h1>
-<p>Start / stop tagged azure resources on a schedule, or on demmand. Integrated into Azure Portal, and runs in your subscription.</p>
-<p>Supported resources:</p>
-<table>
-<thead>
-<tr>
-<th>Resource</th>
-<th>Stop Action</th>
-<th>Start Acton</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Bastion</td>
-<td>delete</td>
-<td>create</td>
-</tr>
-<tr>
-<td>Virtual Machine</td>
-<td>deallocate</td>
-<td>power on</td>
-</tr>
-<tr>
-<td>Virtual Machine Scale Set</td>
-<td>deallocate</td>
-<td>power on</td>
-</tr>
-<tr>
-<td>Azure Kubernetes Service</td>
-<td>stop</td>
-<td>start</td>
-</tr>
-</tbody>
-</table>
-<p>We are continuing to work on this list, if you have something we don't support please get in touch.</p>
-<ul>
-<li><a href="./Installation.md">Installation</a></li>
-<li><a href="./UserGuide.md">User Guide</a></li>
-</ul>
+<p>MMR provides the following views:</p>
+<p>Schedules: manage schedules and view the current state of a schedule.<br>
+Bastion: manage scheduled Bastions, start (create) and stop (delete) a Bastion on demand.<br>
+All Resources: list resources and the schedule they belong to.</p>
+<h2 id="schedules">Schedules </h2>
+<p>Schedules are managed in the 'Schedules' tab located on the panel on the left.</p>
+<p>Azure resources are managed according to how they are tagged. This is defined by the following properties.</p>
+<h3 id="schedule-properties">Schedule Properties </h3>
+<h4 id="tag-name">Tag Name </h4>
+<p>Defaults to 'AutoSchedule'. Azure resources included in a schedule are discovered by a combination of the presence of this tag and it's value.</p>
+<h4 id="tag-value">Tag Value </h4>
+<p>Default to 'Yes'. Use this value to filter the resources into those that belong to a schedule. For example, you may wish to create multiple schedules for different envrionments using values such as 'Dev', 'Test', and 'Acceptance' to identify the resources to be scheduled.</p>
+<h4 id="priority-tag">Priority Tag </h4>
+<p>Defines the order in which the resources will be started. For example you may wish to start a domain controller, then database, then all remaining resources. In the use case your domain controller would get a tag of '100', your database '200', and all remaining resources '300'.</p>
+<p>Tag name defaults to 'AutoSchedulePriority'. If the tag or it's value is not present on a resouce, the priority will default to '400'.</p>
+<p>Current limitations are that there can only be a maximum of 4 groups. Recommented values are '100', '200', '300', and '400'.</p>
+<p>There is a 2 minute delay between each group.</p>
+<p>The stop schedule reverses the order of the priority.</p>
+<h4 id="enabled">Enabled </h4>
+<p>Schedule is enabled or disabled. A disabled schedule can still be triggered manually.</p>
+<h3 id="schedule-execution">Schedule Execution </h3>
+<p>Schedules can be triggered on demand using the start and stop buttons on the Schedule tab.</p>
+<p>When manually triggering a schedule the schedule list will not refresh automatically. You'll need to use the refresh button to view the schedules status.</p>
+<p>If a schedule fails, for example the user assigned identity doesn't have the necessary rights, the error message for most actions can be viewed in the 'Last Error' column on the Schedules tab. This column is hidden by default so you may need to select the 'Edit columns' button to add the colum, or select the 'Raw details' from the elipse button to the right of the row.</p>
+<h2 id="bastions">Bastions </h2>
+<p>As Bastions are "special" in that they cannot be stopped we must delete them as part of a stop schedule and build them for the start schedule.</p>
+<p>This view lists all Bastions, whether they are managed or not (i.e. are part of a schedule), and the details stored about the Bastion to recreate it.</p>
+<p>If a managed Bastion is deleted then the record of that Bastion will need to be deleted from this view as well. If not the Bastion will be recreated when it's assocated schedule is next run.</p>
+<p>The information stored for a Bastion is updated everytime a Bastion is stopped (deleted) by the Schedule. This means that you can adjust the tier, or any other setting, while the Bastion is running and it will be recreated with those same settings the next time the stop and start Schedules are run.</p>
+<h2 id="all-resources">All Resources </h2>
+<p>Use this view to see the current state of the resources (started / stopped) and the schedule a resource belongs to.</p>
+<p>List only shows resources that are capabible of being scheduled, i.e. it will not show resources that MMR isn't capable of starting and stopping, or doesn't have at least read permission over.</p>
+<p>Due to limitations in the Azure API used to populate this list the state of the resource is not always up to date.</p>
 
       </div>
       

@@ -1,5 +1,5 @@
 <!DOCTYPE html><html><head>
-      <title>Overview</title>
+      <title>Installation</title>
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       
@@ -24,45 +24,134 @@
     
       <div class="crossnote markdown-preview  ">
       
-<h1 id="manage-my-resources-mmr">Manage My Resources (MMR) </h1>
-<p>Start / stop tagged azure resources on a schedule, or on demmand. Integrated into Azure Portal, and runs in your subscription.</p>
-<p>Supported resources:</p>
-<table>
-<thead>
-<tr>
-<th>Resource</th>
-<th>Stop Action</th>
-<th>Start Acton</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Bastion</td>
-<td>delete</td>
-<td>create</td>
-</tr>
-<tr>
-<td>Virtual Machine</td>
-<td>deallocate</td>
-<td>power on</td>
-</tr>
-<tr>
-<td>Virtual Machine Scale Set</td>
-<td>deallocate</td>
-<td>power on</td>
-</tr>
-<tr>
-<td>Azure Kubernetes Service</td>
-<td>stop</td>
-<td>start</td>
-</tr>
-</tbody>
-</table>
-<p>We are continuing to work on this list, if you have something we don't support please get in touch.</p>
+<h1 id="installation">Installation </h1>
+<p>Manage My Resources (MMR) consists of a managed application, and a managed resorce group 'mrg-managmyresources-{unique number}' containing the scheduling components. These components include a User Assigned Identity named 'ManageMy-Resources' that must be granted permissions to find, start &amp; stop resources.</p>
+<p>To integrate the user interface into Azure Portal MMR uses a custom resource provider. The locations a custom resource provider can be deployed to are limited.</p>
+<p>Steps:</p>
+<ol>
+<li>Install the application from the marketplace</li>
+<li>Grant the managed application permission to manage your scheduled resources</li>
+<li>Add a Schedule (see the <a href="./UserGuide.md">User Guide</a>)</li>
+<li>Add tags to the resources that belong to the Schedule</li>
+<li>Use the All Resources view in MMR to verify the Schedule has discovered the expected resources</li>
+<li>Trigger the Schedule and verify it's working as expected</li>
+</ol>
+<h2 id="permissions">Permissions </h2>
+<p>In order for the application to have the permission in your subscription to find, start &amp; stop resources, the user assigned identity 'ManageMy-Resources' must be assinged a subscription level role. We recommend using a custom role with a minimal set of permissions.</p>
+<ol>
+<li>Optional: create custom role</li>
+<li>Select the managed resource group (this can be found in the overview section of the managed application).</li>
+<li>Select the user assigned identity named 'ManageMy-Resources'</li>
+<li>Select 'Azure role assignments'</li>
+<li>Add a role assignment at the subscription level granting either the Contributor role or 'Manage My Resources Operator' custom role
 <ul>
-<li><a href="./Installation.md">Installation</a></li>
-<li><a href="./UserGuide.md">User Guide</a></li>
+<li>Contributor: easy win, suitable for testing the product, but grants the application far more rights than it requires</li>
+<li>Manage My Resources Operator: prefered option, assigns the minimum set of rights required to discover, stop and start resources</li>
 </ul>
+</li>
+</ol>
+<h3 id="custom-role">Custom Role </h3>
+<p>Open <a href="https://portal.azure.com/#view/Microsoft_Azure_Billing/SubscriptionsBlade">Azure Portal</a> &gt; Subscription &gt; Access control (IAM) &gt; Add &gt; Add custom role</p>
+<p>Enter:</p>
+<p><strong>Custom role name:</strong> Manage My Resources Operator<br>
+<strong>Description:</strong> Lets the managed application 'Manage My Resources' discover, start and stop tagged resources.<br>
+<strong>Baseline permissions:</strong> start from sratch<br>
+Under <strong>JSON</strong> tab select edit and add these permissions to the actions array:</p>
+<pre data-role="codeBlock" data-info="text" class="language-text text"><code>"Microsoft.Compute/virtualMachines/read",
+"Microsoft.Compute/virtualMachines/instanceView/read",
+"Microsoft.Compute/virtualMachines/deallocate/action",
+"Microsoft.Compute/virtualMachines/start/action",
+"Microsoft.Compute/virtualMachineScaleSets/read",
+"Microsoft.Compute/virtualMachineScaleSets/deallocate/action",
+"Microsoft.Compute/virtualMachineScaleSets/start/action",
+"Microsoft.ContainerService/managedClusters/read",
+"Microsoft.ContainerService/managedClusters/start/action",
+"Microsoft.ContainerService/managedClusters/stop/action",
+"Microsoft.Network/bastionHosts/read",
+"Microsoft.Network/bastionHosts/write",
+"Microsoft.Network/bastionHosts/delete",
+"Microsoft.Network/virtualNetworks/subnets/join/action",
+"Microsoft.Network/publicIPAddresses/join/action"
+</code></pre><p>Documentation for these roles can be found in <a href="https://learn.microsoft.com/en-us/azure/role-based-access-control/resource-provider-operations">https://learn.microsoft.com/en-us/azure/role-based-access-control/resource-provider-operations</a>.</p>
+<p>In production you may only want to manage Bastions, in that senario you could just grant the bastion specifc permissions.</p>
+<h2 id="marketplace-app-deployment-issues">Marketplace App Deployment Issues </h2>
+<p>Tagging (and other) policies can prevent a customer from deploying a marketplace app. Work arounds are:</p>
+<ol>
+<li>
+<p>Policies affecting managed application</p>
+<p>Add an exemption on the problem policies to the scoped to the resource group that the managed application will be deployed to. The excemption can be further refined to target the 'Microsoft.Solutions/applications' resource type.<br>
+The resources created by the managed appliation don't seem to be affected by the policies when this exemption in enabled.</p>
+</li>
+<li>
+<p>Policies affecting managed resource group</p>
+<p>Unfortunately we have no way of targetting these types of resource groups, a solution is to override the policy effect and set to 'Audit'.</p>
+</li>
+<li>
+<p>Tagging Policies</p>
+<p>While our deployment supports tagging the resources deployed to the managed resource group, Marketplace applications do not support tagging the managed application itself. If creating and exemption as per option 1 is not possbile then deploying the managed application using bicep or terraform will allow the setting of tags on the managed application.</p>
+</li>
+</ol>
+<h2 id="automation">Automation </h2>
+<p>The managed application and schedules can be deployed via code.</p>
+<h3 id="managed-application">Managed Application </h3>
+<pre data-role="codeBlock" data-info="bicep" class="language-bicep bicep"><code>TODO bicep example here
+</code></pre><h3 id="schedule">Schedule </h3>
+<pre data-role="codeBlock" data-info="bicep" class="language-bicep bicep"><code>TODO bicep example here
+</code></pre><h4 id="custom-role-1">Custom Role </h4>
+<pre data-role="codeBlock" data-info="bicep" class="language-bicep bicep"><code><span class="token keyword keyword-targetScope">targetScope</span> <span class="token operator">=</span> <span class="token string">'subscription'</span>
+
+<span class="token decorator">@description</span><span class="token punctuation">(</span><span class="token string">'Friendly name of the role definition'</span><span class="token punctuation">)</span>
+<span class="token keyword keyword-param">param</span> roleName <span class="token datatype class-name">string</span> <span class="token operator">=</span> <span class="token string">'Manage My Resources Operator'</span>
+
+<span class="token decorator">@description</span><span class="token punctuation">(</span><span class="token string">'Detailed description of the role definition'</span><span class="token punctuation">)</span>
+<span class="token keyword keyword-param">param</span> roleDescription <span class="token datatype class-name">string</span> <span class="token operator">=</span> <span class="token string">'Lets the managed application \'Manage My Resources\' discover, start and stop tagged resources.'</span>
+
+<span class="token keyword keyword-var">var</span> roleDefName <span class="token operator">=</span> <span class="token function">guid</span><span class="token punctuation">(</span><span class="token function">subscription</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>id<span class="token punctuation">,</span> roleName<span class="token punctuation">)</span>
+
+<span class="token keyword keyword-resource">resource</span> roleDef <span class="token string">'Microsoft.Authorization/roleDefinitions@2022-04-01'</span> <span class="token operator">=</span> <span class="token punctuation">{</span>
+  <span class="token property">name</span><span class="token operator">:</span> roleDefName
+  <span class="token property">properties</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+    <span class="token property">roleName</span><span class="token operator">:</span> roleName
+    <span class="token property">description</span><span class="token operator">:</span> roleDescription
+    <span class="token property">type</span><span class="token operator">:</span> <span class="token string">'customRole'</span>
+    <span class="token property">permissions</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+      <span class="token punctuation">{</span>
+        <span class="token property">actions</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+          <span class="token string">'Microsoft.Compute/virtualMachines/read'</span>
+          <span class="token string">'Microsoft.Compute/virtualMachines/instanceView/read'</span>
+          <span class="token string">'Microsoft.Compute/virtualMachines/deallocate/action'</span>
+          <span class="token string">'Microsoft.Compute/virtualMachines/start/action'</span>
+
+          <span class="token string">'Microsoft.Compute/virtualMachineScaleSets/read'</span>
+          <span class="token string">'Microsoft.Compute/virtualMachineScaleSets/deallocate/action'</span>
+          <span class="token string">'Microsoft.Compute/virtualMachineScaleSets/start/action'</span>
+
+          <span class="token comment">// Kubernetes</span>
+          <span class="token string">'Microsoft.ContainerService/managedClusters/read'</span>
+          <span class="token string">'Microsoft.ContainerService/managedClusters/start/action'</span>
+          <span class="token string">'Microsoft.ContainerService/managedClusters/stop/action'</span>
+
+          <span class="token comment">// Bastion</span>
+          <span class="token string">'Microsoft.Network/bastionHosts/read'</span>
+          <span class="token string">'Microsoft.Network/bastionHosts/write'</span>
+          <span class="token string">'Microsoft.Network/bastionHosts/delete'</span>
+          <span class="token string">'Microsoft.Network/virtualNetworks/subnets/join/action'</span>
+          <span class="token string">'Microsoft.Network/publicIPAddresses/join/action'</span>
+        <span class="token punctuation">]</span>        
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">]</span>
+    <span class="token property">assignableScopes</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+      <span class="token function">subscription</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>id
+    <span class="token punctuation">]</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre><h2 id="coming-soon">Coming Soon </h2>
+<ol>
+<li>SQL Managed Instance</li>
+<li>Cosmos DB</li>
+<li>Greater control over wait times between priority groups</li>
+<li>Edit tagsfor resources directly from MMR?</li>
+</ol>
 
       </div>
       
