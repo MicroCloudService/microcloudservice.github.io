@@ -13,5 +13,5 @@ Supported resources:
 
 We are continuing to work on this list, if you have something we don't support please get in touch.
 
-* [Installation](./Installation.md)
-* [User Guide](./UserGuide.md)
+* [Installation](./Installation.html)
+* [User Guide](./UserGuide.html)
