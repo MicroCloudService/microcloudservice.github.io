@@ -142,10 +142,3 @@ resource roleDef 'Microsoft.Authorization/roleDefinitions@2022-04-01' = {
   }
 }
 ```
-
-## Coming Soon
-
-1. SQL Managed Instance
-2. Cosmos DB
-3. Greater control over wait times between priority groups
-4. Edit tagsfor resources directly from MMR?

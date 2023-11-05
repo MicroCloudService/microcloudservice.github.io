@@ -13,5 +13,12 @@ Supported resources:
 
 We are continuing to work on this list, if you have something we don't support please get in touch.
 
-* [Installation](./Installation.html)
+## Coming Soon
+
+1. SQL Managed Instance
+2. Cosmos DB
+
+## More Information
+
 * [User Guide](./UserGuide.html)
+* [Installation](./Installation.html)
