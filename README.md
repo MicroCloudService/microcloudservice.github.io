@@ -40,3 +40,14 @@ Suitable for testing the product, but grants the application far more rights tha
 Manage My Resources Operator: prefered option, assigns the minimum set of rights required to discover, stop and start resources
 
 Documentation for these roles can be found in https://learn.microsoft.com/en-us/azure/role-based-access-control/resource-provider-operations.
+
+# Now either assign the Contributor or the Custom Role created called 'Manage My Resources Operator' to the Managed Identity named 'ManageMy-Resources'.
+
+[![Deploy To Azure](https://raw.githubusercontent.com/MicroCloudService/microcloudservice.github.io/blob/main/deploytoazure.svg?sanitize=true)](https://raw.githubusercontent.com/MicroCloudService/microcloudservice.github.io/main/Manage_My_Resources_Permissions.json)
+
+Select the managed resource group (this can be found in the overview section of the managed application).
+Select the user assigned identity named 'ManageMy-Resources'
+Select 'Azure role assignments'
+Add a role assignment at the subscription level granting either the Contributor role or 'Manage My Resources Operator' custom role
+Contributor: easy win, suitable for testing the product, but grants the application far more rights than it requires
+Manage My Resources Operator: prefered option, assigns the minimum set of rights required to discover, stop and start resources
