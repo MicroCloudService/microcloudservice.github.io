@@ -1,0 +1,74 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "metadata": {
+      "_generator": {
+        "name": "bicep",
+        "version": "0.5.6.12127",
+        "templateHash": "2227781763411200690"
+      }
+    },
+    "parameters": {
+      "actions": {
+        "type": "array",
+        "defaultValue": [
+            "Microsoft.Compute/virtualMachines/read",
+            "Microsoft.Compute/virtualMachines/instanceView/read",
+            "Microsoft.Compute/virtualMachines/deallocate/action",
+            "Microsoft.Compute/virtualMachines/start/action",
+            "Microsoft.Compute/virtualMachineScaleSets/read",
+            "Microsoft.Compute/virtualMachineScaleSets/deallocate/action",
+            "Microsoft.Compute/virtualMachineScaleSets/start/action",
+            "Microsoft.ContainerService/managedClusters/read",
+            "Microsoft.ContainerService/managedClusters/start/action",
+            "Microsoft.ContainerService/managedClusters/stop/action",
+            "Microsoft.Network/bastionHosts/read",
+            "Microsoft.Network/bastionHosts/write",
+            "Microsoft.Network/bastionHosts/delete",
+            "Microsoft.Network/virtualNetworks/subnets/join/action",
+            "Microsoft.Network/publicIPAddresses/join/action"
+        ],
+        "metadata": {
+          "description": "Array of actions for the roleDefinition"
+        }
+      },
+
+      "roleName": {
+        "type": "string",
+        "defaultValue": "Manage My Resources Operator",
+        "metadata": {
+          "description": "Role Name = Manage My Resources Operator"
+        }
+      },
+      "roleDescription": {
+        "type": "string",
+        "defaultValue": "Lets the managed application 'Manage My Resources' discover, start and stop tagged resources.",
+        "metadata": {
+          "description": "Lets the managed application 'Manage My Resources' discover, start and stop tagged resources."
+        }
+      }
+    },
+    "variables": {
+      "roleDefName": "[guid(subscription().id, string(parameters('actions')))]"
+    },
+    "resources": [
+      {
+        "type": "Microsoft.Authorization/roleDefinitions",
+        "apiVersion": "2018-07-01",
+        "name": "[variables('roleDefName')]",
+        "properties": {
+          "roleName": "[parameters('roleName')]",
+          "description": "[parameters('roleDescription')]",
+          "type": "customRole",
+          "permissions": [
+            {
+              "actions": "[parameters('actions')]"
+            }
+          ],
+          "assignableScopes": [
+            "[subscription().id]"
+          ]
+        }
+      }
+    ]
+  }
