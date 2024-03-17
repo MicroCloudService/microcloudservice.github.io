@@ -41,7 +41,9 @@ Manage My Resources Operator: prefered option, assigns the minimum set of rights
 
 Documentation for these roles can be found in https://learn.microsoft.com/en-us/azure/role-based-access-control/resource-provider-operations.
 
-# Now either assign the Contributor or the Custom Role created called 'Manage My Resources Operator' to the Managed Identity named 'ManageMy-Resources'.
+# Next Steps 
+
+Either assign the Contributor or the Custom Role created called 'Manage My Resources Operator' to the Managed Identity named 'ManageMy-Resources'.
 
 [![Deploy To Azure](https://raw.githubusercontent.com/MicroCloudService/microcloudservice.github.io/main/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FMicroCloudService%2Fmicrocloudservice.github.io%2Fmain%2FManage_My_Resources_Permissions.json)
 
