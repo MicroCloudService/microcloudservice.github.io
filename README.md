@@ -1,7 +1,7 @@
 # Create a custom role and add 'Azure role assignments' to have the permission in your subscription to find, start & stop resources
 
 
-[![Deploy To Azure](https://raw.githubusercontent.com/MicroCloudService/microcloudservice.github.io/blob/main/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FMicroCloudService%2Fmicrocloudservice.github.io%2Fmain%2FManage_My_Resources_Operator.json)
+[![Deploy To Azure](https://raw.githubusercontent.com/MicroCloudService/microcloudservice.github.io/main/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FMicroCloudService%2Fmicrocloudservice.github.io%2Fmain%2FManage_My_Resources_Operator.json)
 
 In order for the application to have the permission in your subscription to find, start & stop resources, the user assigned identity 'ManageMy-Resources' must be assigned a subscription level role. 
 
@@ -43,7 +43,7 @@ Documentation for these roles can be found in https://learn.microsoft.com/en-us/
 
 # Now either assign the Contributor or the Custom Role created called 'Manage My Resources Operator' to the Managed Identity named 'ManageMy-Resources'.
 
-[![Deploy To Azure](https://raw.githubusercontent.com/MicroCloudService/microcloudservice.github.io/blob/main/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FMicroCloudService%2Fmicrocloudservice.github.io%2Fmain%2FManage_My_Resources_Permissions.json)
+[![Deploy To Azure](https://raw.githubusercontent.com/MicroCloudService/microcloudservice.github.io/main/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FMicroCloudService%2Fmicrocloudservice.github.io%2Fmain%2FManage_My_Resources_Permissions.json)
 
 Select the managed resource group (this can be found in the overview section of the managed application).
 
